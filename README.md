@@ -98,6 +98,7 @@ Password: `hirefo-dev-2024`
 | `npm run db:seed` | seeds the demo org, 5 questions, 24 test cases, 2 interviews (idempotent) |
 | `npm run runtimes:build` | builds `hirefo-runtime-node:1` and `hirefo-runtime-python:1` |
 | `npm run infra:down` | stops the datastores |
+| `npm run test:setup` | creates and migrates the `hirefo_test` and `hirefo_e2e` databases |
 
 > The compose ports are deliberately unusual (`55439`, `56389`) to avoid clashing
 > with other local projects. Change them in `docker-compose.yml` and `.env`
@@ -148,15 +149,19 @@ npm run db:reset       # drop, re-migrate, re-seed
 | `@hirefo/web` | 35 | formatters, UI primitives, accessibility attributes |
 | Playwright | 2 journeys | register → question → interview → invite → two participants collaborate → sandboxed run → notes → evaluation; plus candidate access scoping |
 
-The API suite needs Postgres and Redis up, and uses its own `hirefo_test`
-database (it refuses to run against anything whose name lacks `test`). The worker
-suite skips itself with a loud warning if Docker or the runtime images are absent.
+The API suite uses its own `hirefo_test` database and the Playwright journeys use
+`hirefo_e2e`, so neither touches your development data. Create both once:
 
 ```bash
 npm run infra:up
-docker exec hirefo-postgres psql -U hirefo -d hirefo -c "CREATE DATABASE hirefo_test"
+npm run test:setup     # creates hirefo_test + hirefo_e2e and migrates them
 npm run test
+npm run test:e2e       # starts its own API, worker and Vite on separate ports
 ```
+
+The API suite refuses to run against any database whose name lacks `test`, since
+it truncates tables. The worker suite skips itself with a loud warning when Docker
+or the runtime images are absent, so it does not fail on a machine without them.
 
 ## Running without Docker
 
