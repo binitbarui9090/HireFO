@@ -1,0 +1,211 @@
+/*
+ * Design tokens.
+ *
+ * Dark is the default (it is where interviewers spend the session); light is a
+ * first-class theme, not an inversion. Every colour is defined once here and
+ * referenced by semantic name — no raw hex values anywhere else in the app.
+ */
+:root {
+  /* Typography */
+  --font-sans: ui-sans-serif, -apple-system, 'Segoe UI', 'Inter', 'Helvetica Neue', Arial,
+    sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'JetBrains Mono', 'Fira Code', Menlo, Consolas, monospace;
+
+  --text-2xs: 0.6875rem;
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-base: 0.875rem;
+  --text-md: 0.9375rem;
+  --text-lg: 1.0625rem;
+  --text-xl: 1.3125rem;
+  --text-2xl: 1.625rem;
+  --text-3xl: 2.125rem;
+
+  --weight-normal: 400;
+  --weight-medium: 500;
+  --weight-semibold: 580;
+  --weight-bold: 680;
+
+  --leading-tight: 1.25;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.65;
+
+  --tracking-tight: -0.011em;
+  --tracking-wide: 0.02em;
+  --tracking-caps: 0.06em;
+
+  /* Spacing — 4px base */
+  --space-0: 0;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* Radii */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-xl: 14px;
+  --radius-full: 999px;
+
+  /* Motion — short and purposeful */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --duration-fast: 90ms;
+  --duration-base: 150ms;
+  --duration-slow: 240ms;
+
+  /* Layout */
+  --sidebar-width: 232px;
+  --topbar-height: 52px;
+  --content-max: 1240px;
+
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-modal: 400;
+  --z-toast: 500;
+
+  /* Presence colours — must match PRESENCE_COLORS in @hirefo/shared */
+  --presence-0: #5b8cff;
+  --presence-1: #f7768e;
+  --presence-2: #9ece6a;
+  --presence-3: #e0af68;
+  --presence-4: #bb9af7;
+  --presence-5: #2ac3de;
+}
+
+/* ---------- Dark (default) ---------- */
+:root,
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --bg-base: #0b0d10;
+  --bg-sunken: #08090b;
+  --bg-surface: #11141a;
+  --bg-raised: #171b22;
+  --bg-overlay: #1c212a;
+  --bg-input: #0e1116;
+  --bg-hover: rgba(255, 255, 255, 0.045);
+  --bg-active: rgba(255, 255, 255, 0.08);
+  --bg-selected: rgba(91, 140, 255, 0.12);
+  --bg-scrim: rgba(3, 4, 6, 0.72);
+
+  --border-subtle: #1d222b;
+  --border-default: #262c37;
+  --border-strong: #353d4a;
+  --border-focus: #5b8cff;
+
+  --text-primary: #e8ebf0;
+  --text-secondary: #a2abba;
+  --text-tertiary: #6f7988;
+  --text-disabled: #4a5260;
+  --text-inverse: #0b0d10;
+
+  --accent: #5b8cff;
+  --accent-hover: #74a0ff;
+  --accent-active: #4a7af0;
+  --accent-subtle: rgba(91, 140, 255, 0.14);
+  --accent-border: rgba(91, 140, 255, 0.4);
+  --accent-text: #9fbcff;
+
+  --success: #46b26a;
+  --success-subtle: rgba(70, 178, 106, 0.14);
+  --success-border: rgba(70, 178, 106, 0.38);
+  --success-text: #7fd39a;
+
+  --danger: #e5484d;
+  --danger-hover: #ef5f63;
+  --danger-subtle: rgba(229, 72, 77, 0.14);
+  --danger-border: rgba(229, 72, 77, 0.4);
+  --danger-text: #ff9093;
+
+  --warning: #d89614;
+  --warning-subtle: rgba(216, 150, 20, 0.14);
+  --warning-border: rgba(216, 150, 20, 0.4);
+  --warning-text: #e7b64f;
+
+  --info: #2ac3de;
+  --info-subtle: rgba(42, 195, 222, 0.12);
+  --info-border: rgba(42, 195, 222, 0.35);
+  --info-text: #6fd9ec;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.42), 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.52), 0 2px 6px rgba(0, 0, 0, 0.45);
+
+  --editor-theme: hirefo-dark;
+}
+
+/* ---------- Light ---------- */
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --bg-base: #ffffff;
+  --bg-sunken: #f6f7f9;
+  --bg-surface: #ffffff;
+  --bg-raised: #ffffff;
+  --bg-overlay: #ffffff;
+  --bg-input: #ffffff;
+  --bg-hover: rgba(10, 15, 25, 0.04);
+  --bg-active: rgba(10, 15, 25, 0.07);
+  --bg-selected: rgba(43, 108, 240, 0.09);
+  --bg-scrim: rgba(18, 23, 33, 0.38);
+
+  --border-subtle: #ebedf1;
+  --border-default: #dde0e6;
+  --border-strong: #c4c9d2;
+  --border-focus: #2b6cf0;
+
+  --text-primary: #10141c;
+  --text-secondary: #525b6b;
+  --text-tertiary: #7b8495;
+  --text-disabled: #a9b0bc;
+  --text-inverse: #ffffff;
+
+  --accent: #2b6cf0;
+  --accent-hover: #1d5bdb;
+  --accent-active: #1a4fc0;
+  --accent-subtle: rgba(43, 108, 240, 0.09);
+  --accent-border: rgba(43, 108, 240, 0.32);
+  --accent-text: #1d55c9;
+
+  --success: #197e42;
+  --success-subtle: rgba(25, 126, 66, 0.1);
+  --success-border: rgba(25, 126, 66, 0.3);
+  --success-text: #15703a;
+
+  --danger: #d0342c;
+  --danger-hover: #b92b24;
+  --danger-subtle: rgba(208, 52, 44, 0.09);
+  --danger-border: rgba(208, 52, 44, 0.3);
+  --danger-text: #b2271f;
+
+  --warning: #9a6200;
+  --warning-subtle: rgba(154, 98, 0, 0.1);
+  --warning-border: rgba(154, 98, 0, 0.3);
+  --warning-text: #8a5800;
+
+  --info: #0b7285;
+  --info-subtle: rgba(11, 114, 133, 0.09);
+  --info-border: rgba(11, 114, 133, 0.28);
+  --info-text: #0a6577;
+
+  --shadow-sm: 0 1px 2px rgba(16, 20, 28, 0.07);
+  --shadow-md: 0 4px 12px rgba(16, 20, 28, 0.09), 0 1px 2px rgba(16, 20, 28, 0.06);
+  --shadow-lg: 0 16px 40px rgba(16, 20, 28, 0.13), 0 2px 6px rgba(16, 20, 28, 0.07);
+
+  --editor-theme: hirefo-light;
+
+  --presence-0: #2b6cf0;
+  --presence-1: #d0342c;
+  --presence-2: #197e42;
+  --presence-3: #9a6200;
+  --presence-4: #7a3fd0;
+  --presence-5: #0b7285;
+}

@@ -1,0 +1,67 @@
+.container {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.horizontal {
+  flex-direction: row;
+}
+
+.vertical {
+  flex-direction: column;
+}
+
+.pane {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.handle {
+  flex: 0 0 auto;
+  position: relative;
+  background: var(--border-subtle);
+  border: none;
+  padding: 0;
+  transition: background var(--duration-fast) var(--ease-out);
+  touch-action: none;
+}
+
+.handleHorizontal {
+  width: 1px;
+  cursor: col-resize;
+}
+
+.handleVertical {
+  height: 1px;
+  cursor: row-resize;
+}
+
+/* Widen the hit area without widening the visual line. */
+.handleHorizontal::after,
+.handleVertical::after {
+  content: '';
+  position: absolute;
+}
+
+.handleHorizontal::after {
+  inset-block: 0;
+  inset-inline: -4px;
+}
+
+.handleVertical::after {
+  inset-inline: 0;
+  inset-block: -4px;
+}
+
+.handle:hover,
+.handle:focus-visible,
+.dragging {
+  background: var(--accent);
+  outline: none;
+}

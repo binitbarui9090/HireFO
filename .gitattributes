@@ -1,0 +1,4 @@
+* text=auto eol=lf
+*.sh text eol=lf
+runtimes/*/hirefo-exec text eol=lf
+runtimes/*/hirefo-check text eol=lf

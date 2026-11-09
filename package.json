@@ -1,0 +1,49 @@
+{
+  "name": "hirefo",
+  "private": true,
+  "version": "1.0.0",
+  "description": "HireFO — AI-assisted technical hiring & live interview platform",
+  "license": "MIT",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "npm run build -w @hirefo/shared && npm run build -w @hirefo/api && npm run build -w @hirefo/worker && npm run build -w @hirefo/web",
+    "dev": "concurrently -k -n api,worker,web -c blue,magenta,green \"npm:dev:api\" \"npm:dev:worker\" \"npm:dev:web\"",
+    "dev:api": "npm run dev -w @hirefo/api",
+    "dev:worker": "npm run dev -w @hirefo/worker",
+    "dev:web": "npm run dev -w @hirefo/web",
+    "infra:up": "docker compose up -d postgres redis",
+    "infra:down": "docker compose down",
+    "infra:logs": "docker compose logs -f",
+    "runtimes:build": "bash scripts/build-runtimes.sh",
+    "db:migrate": "npm run db:migrate -w @hirefo/api",
+    "db:deploy": "npm run db:deploy -w @hirefo/api",
+    "db:seed": "npm run db:seed -w @hirefo/api",
+    "db:studio": "npm run db:studio -w @hirefo/api",
+    "db:reset": "npm run db:reset -w @hirefo/api",
+    "setup": "npm install && npm run infra:up && npm run db:deploy && npm run db:seed && npm run runtimes:build",
+    "test": "npm run test -w @hirefo/shared && npm run test -w @hirefo/api && npm run test -w @hirefo/worker && npm run test -w @hirefo/web",
+    "test:api": "npm run test -w @hirefo/api",
+    "test:e2e": "npm run test:e2e -w @hirefo/web",
+    "typecheck": "npm run typecheck -w @hirefo/shared && npm run typecheck -w @hirefo/api && npm run typecheck -w @hirefo/worker && npm run typecheck -w @hirefo/web",
+    "lint": "npm run typecheck",
+    "test:setup": "bash scripts/create-test-databases.sh"
+  },
+  "devDependencies": {
+    "concurrently": "9.1.2",
+    "typescript": "5.7.3"
+  },
+  "allowScripts": {
+    "@prisma/client@6.2.1": true,
+    "@prisma/engines@6.2.1": true,
+    "prisma@6.2.1": true,
+    "esbuild@0.23.1": true,
+    "esbuild@0.21.5": true,
+    "esbuild@0.24.2": true
+  }
+}

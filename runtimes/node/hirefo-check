@@ -1,0 +1,21 @@
+#!/bin/sh
+# Compile / type check pass. Runs once per job, before any test case.
+# Exits non-zero with diagnostics on stdout+stderr when the source does not build.
+set -eu
+
+LANG_ID="${1:?language argument required}"
+: "${HIREFO_SOURCE_B64:?HIREFO_SOURCE_B64 is required}"
+
+cd /sandbox
+
+case "$LANG_ID" in
+  typescript)
+    printf '%s' "$HIREFO_SOURCE_B64" | base64 -d > /sandbox/main.ts
+    cp /opt/hirefo/tsconfig.sandbox.json /sandbox/tsconfig.json
+    exec timeout -s KILL 25 tsc -p /sandbox/tsconfig.json
+    ;;
+  *)
+    echo "hirefo-check: nothing to check for '$LANG_ID'" >&2
+    exit 0
+    ;;
+esac

@@ -1,0 +1,23 @@
+#!/bin/sh
+# Sandbox entrypoint for the Python runtime image. See runtimes/node/hirefo-exec.
+set -eu
+
+LANG_ID="${1:?language argument required}"
+: "${HIREFO_SOURCE_B64:?HIREFO_SOURCE_B64 is required}"
+TIMEOUT="${HIREFO_TIMEOUT_SECONDS:-10}"
+
+cd /sandbox
+
+case "$LANG_ID" in
+  python)
+    printf '%s' "$HIREFO_SOURCE_B64" | base64 -d > /sandbox/main.py
+    # -I  isolated mode: ignores PYTHON* env vars and keeps the cwd off sys.path,
+    #     so a file dropped in /sandbox cannot shadow a stdlib import.
+    # -B  do not write .pyc files (the filesystem is read-only anyway).
+    exec timeout -s KILL "$TIMEOUT" python3 -I -B /sandbox/main.py
+    ;;
+  *)
+    echo "hirefo-exec: unsupported language '$LANG_ID'" >&2
+    exit 64
+    ;;
+esac

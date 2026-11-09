@@ -1,0 +1,36 @@
+#!/bin/sh
+# Sandbox entrypoint for the Node runtime image.
+#
+# The candidate's source arrives base64-encoded in HIREFO_SOURCE_B64 and is
+# written into the tmpfs at /sandbox. Nothing is ever read from a host mount.
+#
+# Argument 1 is the language, supplied by the worker from a fixed allow-list; it
+# is never user input.
+set -eu
+
+LANG_ID="${1:?language argument required}"
+: "${HIREFO_SOURCE_B64:?HIREFO_SOURCE_B64 is required}"
+TIMEOUT="${HIREFO_TIMEOUT_SECONDS:-10}"
+
+cd /sandbox
+
+case "$LANG_ID" in
+  javascript)
+    printf '%s' "$HIREFO_SOURCE_B64" | base64 -d > /sandbox/main.js
+    # `timeout` is a second line of defence; the worker also kills the container.
+    exec timeout -s KILL "$TIMEOUT" node /sandbox/main.js
+    ;;
+  typescript)
+    printf '%s' "$HIREFO_SOURCE_B64" | base64 -d > /sandbox/main.ts
+    # Types were already checked by hirefo-check in a separate container, so the
+    # run path only strips them — esbuild does that in milliseconds.
+    esbuild /sandbox/main.ts \
+      --platform=node --format=cjs --target=node20 \
+      --outfile=/sandbox/main.built.cjs --log-level=error
+    exec timeout -s KILL "$TIMEOUT" node /sandbox/main.built.cjs
+    ;;
+  *)
+    echo "hirefo-exec: unsupported language '$LANG_ID'" >&2
+    exit 64
+    ;;
+esac

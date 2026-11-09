@@ -1,0 +1,40 @@
+# HireFO local infrastructure.
+# Only datastores run here. The API, worker and web app run on the host in dev
+# so that the worker can talk to the host Docker daemon for sandboxing.
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: hirefo-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: hirefo
+      POSTGRES_PASSWORD: hirefo
+      POSTGRES_DB: hirefo
+    ports:
+      - "55439:5432"
+    volumes:
+      - hirefo-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hirefo -d hirefo"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    container_name: hirefo-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "256mb", "--maxmemory-policy", "noeviction"]
+    ports:
+      - "56389:6379"
+    volumes:
+      - hirefo-redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  hirefo-pgdata:
+  hirefo-redisdata:
