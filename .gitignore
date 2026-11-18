@@ -17,3 +17,6 @@ test-results/
 playwright-report/
 blob-report/
 .playwright/
+
+# CI-generated, never committed
+.env.ci

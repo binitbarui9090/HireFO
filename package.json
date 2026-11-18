@@ -4,6 +4,14 @@
   "version": "1.0.0",
   "description": "HireFO — AI-assisted technical hiring & live interview platform",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/binitbarui9090/HireFO.git"
+  },
+  "homepage": "https://github.com/binitbarui9090/HireFO#readme",
+  "bugs": {
+    "url": "https://github.com/binitbarui9090/HireFO/issues"
+  },
   "workspaces": [
     "packages/*",
     "apps/*"

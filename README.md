@@ -1,5 +1,8 @@
 # HireFO
 
+[![CI](https://github.com/binitbarui9090/HireFO/actions/workflows/ci.yml/badge.svg)](https://github.com/binitbarui9090/HireFO/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 A technical interview platform: a live collaborative editor, sandboxed code
 execution against real test cases, and an interviewer copilot that drafts — and
 never decides.

@@ -1,0 +1,125 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  JWT_ACCESS_SECRET: ci-access-secret-at-least-32-characters-long
+  JWT_REFRESH_SECRET: ci-refresh-secret-at-least-32-characters-long
+
+jobs:
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Generate Prisma client
+        run: npx prisma generate --schema apps/api/prisma/schema.prisma
+      - run: npm run typecheck
+
+  unit-and-integration:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: hirefo
+          POSTGRES_PASSWORD: hirefo
+          POSTGRES_DB: hirefo_test
+        ports: ["55439:5432"]
+        options: >-
+          --health-cmd "pg_isready -U hirefo -d hirefo_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+      redis:
+        image: redis:7-alpine
+        ports: ["56389:6379"]
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      HIREFO_ENV_FILE: .env.ci
+      DATABASE_URL: postgresql://hirefo:hirefo@127.0.0.1:55439/hirefo_test?schema=public
+      REDIS_URL: redis://127.0.0.1:56389/1
+      NODE_ENV: test
+      EXECUTION_RUNNER: LOCAL_SUBPROCESS
+      AI_PROVIDER: disabled
+      LOG_LEVEL: silent
+      COOKIE_SECURE: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Generate Prisma client
+        run: npx prisma generate --schema apps/api/prisma/schema.prisma
+      - name: Write .env.ci (used by scripts/with-env.mjs)
+        run: |
+          cat > .env.ci <<EOF
+          NODE_ENV=test
+          DATABASE_URL=${DATABASE_URL}
+          REDIS_URL=${REDIS_URL}
+          EXECUTION_RUNNER=LOCAL_SUBPROCESS
+          AI_PROVIDER=disabled
+          LOG_LEVEL=silent
+          COOKIE_SECURE=false
+          JWT_ACCESS_SECRET=${JWT_ACCESS_SECRET}
+          JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
+          EOF
+      - name: Apply migrations to the test database
+        run: node scripts/with-env.mjs npx prisma migrate deploy --schema apps/api/prisma/schema.prisma
+      - name: Build shared package (consumed by the others)
+        run: npm run build -w @hirefo/shared
+      - name: Test — shared
+        run: npm run test -w @hirefo/shared
+      - name: Test — api (auth, tenancy, interviews, execution pipeline, docs, copilot guardrails)
+        run: npm run test -w @hirefo/api
+      - name: Test — web (formatters, UI primitives)
+        run: npm run test -w @hirefo/web
+
+  sandbox:
+    # The Docker sandbox suite needs a real daemon with --network none, cgroups,
+    # etc. GitHub's ubuntu-latest runners ship Docker already configured for
+    # this, so the isolation claims in docs/SECURITY.md are verified on every PR.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Build the sandbox runtime images
+        run: npm run runtimes:build
+      - name: Test — worker (sandbox isolation against the real Docker daemon)
+        run: npm run test -w @hirefo/worker
+
+  build:
+    runs-on: ubuntu-latest
+    needs: [typecheck]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Generate Prisma client
+        run: npx prisma generate --schema apps/api/prisma/schema.prisma
+      - run: npm run build
