@@ -20,3 +20,5 @@ blob-report/
 
 # CI-generated, never committed
 .env.ci
+.vercel
+.env*
