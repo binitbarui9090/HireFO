@@ -13,6 +13,22 @@ Four artefacts from one repository:
 
 Plus managed Postgres 16+ and Redis 7+.
 
+### 1.1 What's actually deployed to Vercel right now
+
+The project's `vercel.json` builds only `@hirefo/web` and serves it as a static
+SPA (<https://hirefo.vercel.app>) — the frontend is the one artefact above with
+"nothing at runtime" in the Needs column, which is exactly what Vercel's
+serverless platform is for. `@hirefo/api` and `@hirefo/worker` are **not**
+deployed there: Vercel has no long-lived process for a BullMQ worker or a
+Socket.IO server, and critically no Docker daemon for the execution sandbox.
+Running those on a platform like Vercel Functions would mean either not
+sandboxing untrusted code at all, or building a second, weaker sandbox just to
+fit the constraint — both contradict the security model in
+[SECURITY.md](SECURITY.md). Host the API and worker per the rest of this
+document (Fly.io, Railway, a plain VM, or Kubernetes with a sandboxed
+RuntimeClass all work); point the Vercel deployment's `VITE_API_URL` env var at
+that host and redeploy.
+
 ## 2. Build
 
 ```bash

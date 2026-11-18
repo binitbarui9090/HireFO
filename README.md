@@ -18,6 +18,20 @@ never decides.
 └─────────────────┴───────────────────────────────────────┴───────────────────┘
 ```
 
+**Source:** <https://github.com/binitbarui9090/HireFO>
+**Live demo (frontend only):** <https://hirefo.vercel.app>
+
+> The Vercel deployment is the **static frontend only**. There is no API behind
+> it — the platform's execution worker needs a Docker daemon and its API needs
+> Postgres, Redis and persistent WebSocket connections, none of which Vercel's
+> serverless runtime provides. Opening the demo shows the real UI shell
+> (sign-in, theming, the empty-state screens) but every request to `/api/*`
+> correctly 404s rather than returning fake data. To see the whole platform
+> working — login, the live editor, sandboxed execution, the copilot — run it
+> locally with the one-command [setup](#setup) below, or deploy the API and
+> worker to a host with Docker access per
+> [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
+
 ## What works
 
 Everything listed here is implemented and covered by automated tests. Nothing is
